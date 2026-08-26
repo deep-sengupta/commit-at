@@ -1,0 +1,5 @@
+{
+  "name":"commit-at","version":"0.2.0","private":true,"type":"module",
+  "scripts":{"build":"node src/build.js","dev":"node --watch src/index.js","start":"node src/index.js"},
+  "dependencies":{"cors":"^2.8.5","dotenv":"^16.4.7","express":"^5.1.0"}
+}

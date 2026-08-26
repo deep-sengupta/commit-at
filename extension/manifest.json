@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "commit-at",
+  "version": "0.2.0",
+  "description": "Schedule GitHub commits from a browser extension.",
+  "action": {
+    "default_title": "commit-at",
+    "default_popup": "popup.html",
+    "default_icon": "icon128.png"
+  },
+  "permissions": [
+    "storage",
+    "notifications"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:8787/*",
+    "https://api.github.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "128": "icon128.png"
+  }
+}
