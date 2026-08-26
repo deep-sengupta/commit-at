@@ -24,7 +24,8 @@ if(!githubToken){
   const env=`GITHUB_DEV_TOKEN=${githubToken.replace(/[\r\n]/g,"")}\nCOMMIT_AT_API_TOKEN=${apiToken}\n`;
   fs.writeFileSync(envPath,env,{mode:0o600});
   console.log("server/.env created successfully.");
-  console.log("COMMIT_AT_API_TOKEN generated automatically.");
+  console.log(`COMMIT_AT_API_TOKEN=${apiToken}`);
+  console.log("Paste this token into the commit-at extension.");
   console.log("Starting server...");
   await import("./index.js");
 }
