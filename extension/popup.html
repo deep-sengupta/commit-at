@@ -20,8 +20,8 @@
     <h2>Server Settings</h2>
     <p class="muted">Enter the API token configured on the local server.</p>
     <label for="apiToken">API token</label>
-    <input id="apiToken" type="password" autocomplete="off" placeholder="Configured automatically" readonly>
-    <button id="saveToken">Refresh API token</button>
+    <input id="apiToken" type="password" autocomplete="off" placeholder="Paste the server API token">
+    <button id="saveToken">Save API token</button>
     <div id="tokenStatus" class="status"></div>
     <h2>GitHub Connection</h2>
     <p class="muted">Connect to GitHub to schedule repository commits from the extension.</p>
@@ -97,5 +97,15 @@
 </div>
 <script src="config.js"></script>
 <script src="popup.js"></script>
+<script>
+const commitAtFetch=window.fetch.bind(window);
+window.fetch=async(input,options)=>{
+  if(String(input)===CONFIG.API_BASE_URL+"/api/config"){
+    const token=document.getElementById("apiToken").value.trim();
+    return new Response(JSON.stringify({apiToken:token}),{status:token?200:401,headers:{"Content-Type":"application/json"}});
+  }
+  return commitAtFetch(input,options);
+};
+</script>
 </body>
 </html>
