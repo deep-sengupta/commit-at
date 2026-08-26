@@ -1,5 +1,4 @@
 import express from "express";
-import cors from "cors";
 import dotenv from "dotenv";
 import crypto from "crypto";
 import fs from "fs";
@@ -12,14 +11,7 @@ const API_TOKEN=String(process.env.COMMIT_AT_API_TOKEN||"").trim();
 if(!API_TOKEN) {
   throw new Error("COMMIT_AT_API_TOKEN is required. Set it in server/.env before starting the server.");
 }
-app.use(cors({
-  origin:/^chrome-extension:\/\/[a-p]{32}$/,
-  methods:["GET","POST","DELETE","OPTIONS"],
-  allowedHeaders:["Content-Type","X-Commit-At-Token"]
-}));
-app.get("/api/config",(_,res)=>res.json({apiToken:API_TOKEN}));
 app.use((req,res,next)=>{
-  if(req.method==="OPTIONS") return next();
   const provided=String(req.get("X-Commit-At-Token")||"");
   const expected=Buffer.from(API_TOKEN,"utf8");
   const actual=Buffer.from(provided,"utf8");
