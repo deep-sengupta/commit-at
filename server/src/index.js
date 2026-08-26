@@ -11,6 +11,7 @@ const API_TOKEN=String(process.env.COMMIT_AT_API_TOKEN||"").trim();
 if(!API_TOKEN) {
   throw new Error("COMMIT_AT_API_TOKEN is required. Set it in server/.env before starting the server.");
 }
+app.get("/api/health",(_,res)=>res.json({ok:true}));
 app.use((req,res,next)=>{
   const provided=String(req.get("X-Commit-At-Token")||"");
   const expected=Buffer.from(API_TOKEN,"utf8");
@@ -63,7 +64,6 @@ async function github(path, options={}){
   return data;
 }
 
-app.get("/api/health",(_,res)=>res.json({ok:true}));
 app.get("/api/github/me",async(_,res)=>{try{const u=await github("/user");res.json({login:u.login,id:u.id,html_url:u.html_url});}catch(e){res.status(401).json({error:e.message})}});
 app.get("/api/github/repos",async(_,res)=>{
   try{
