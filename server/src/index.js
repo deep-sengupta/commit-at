@@ -130,8 +130,9 @@ async function executeCommit(job){
   const parentCommit=await github(`/repos/${full}/git/commits/${parentSha}`);
   const tree=[];
   for(const file of job.files){
-    const blob=await github(`/repos/${full}/git/blobs`,{method:"POST",body:JSON.stringify({content:file.content,encoding:"base64"})});
-    tree.push({path:file.path.replace(/^\/+/,""),mode:"100644",type:"blob",sha:blob.sha});
+    if(typeof file.path!=="string"||!file.path||file.path.includes("\\")||file.path.startsWith("/")||file.path.split("/").some(part=>!part||part==="."||part==="..")) throw new Error("Invalid file path.");
+    const blob=await github(`/repos/${full}/git/blobs`,{method:"POST",body:JSON.stringify({content:Buffer.from(file.content,"utf8").toString("base64"),encoding:"base64"})});
+    tree.push({path:file.path,mode:"100644",type:"blob",sha:blob.sha});
   }
   const newTree=await github(`/repos/${full}/git/trees`,{method:"POST",body:JSON.stringify({base_tree:parentCommit.tree.sha,tree})});
   const commit=await github(`/repos/${full}/git/commits`,{method:"POST",body:JSON.stringify({message:job.message,tree:newTree.sha,parents:[parentSha]})});
