@@ -58,7 +58,7 @@ The `build` command:
 
 The server refuses to start when `COMMIT_AT_API_TOKEN` is missing.
 
-The extension fetches the generated local API token from the running server and stores it in `chrome.storage.local`, so no token value is hardcoded in `extension/config.js`.
+The generated `COMMIT_AT_API_TOKEN` is printed once by the build command. Paste that token into the extension and click **Save API token**. The extension stores the token in `chrome.storage.local` and sends it with authenticated API requests. The server never exposes the token over HTTP.
 
 No additional server-start command is required after `npm run build`.
 
@@ -110,9 +110,9 @@ Keep the server process running while using scheduled commits.
 
 The API token is not stored in `extension/config.js`.
 
-Once the local server is running, the extension obtains the generated token automatically and stores it in `chrome.storage.local`.
+After running `npm run build`, copy the generated `COMMIT_AT_API_TOKEN` from the terminal. Open the extension, paste it into the **API token** field, and click **Save API token**.
 
-No token needs to be entered manually in the extension.
+The token is stored in `chrome.storage.local` and is not requested from the local server.
 
 ## Load the Extension
 
@@ -255,15 +255,16 @@ Expected response:
 Next:
 
 1. Load the extension.
-2. Connect to GitHub.
-3. Select a test repository.
-4. Add a small test file.
-5. Set a commit message.
-6. Schedule the commit a few minutes in the future.
-7. Keep the server process running.
-8. Wait for the scheduled time.
-9. Open the repository on GitHub.
-10. Verify that the commit was created.
+2. Paste the generated API token into the extension and save it.
+3. Connect to GitHub.
+4. Select a test repository.
+5. Add a small test file.
+6. Set a commit message.
+7. Schedule the commit a few minutes in the future.
+8. Keep the server process running.
+9. Wait for the scheduled time.
+10. Open the repository on GitHub.
+11. Verify that the commit was created.
 
 ## Important
 
@@ -338,5 +339,7 @@ server/.env
 ```
 
 is excluded from version control.
+
+The local API token is generated during setup, shown once in the terminal, and stored by the extension after the user pastes it. The server does not expose the API token through an HTTP endpoint.
 
 For a production-ready version, use a proper GitHub App or OAuth flow with secure server-side credential storage.
