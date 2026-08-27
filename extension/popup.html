@@ -97,15 +97,5 @@
 </div>
 <script src="config.js"></script>
 <script src="popup.js"></script>
-<script>
-const commitAtFetch=window.fetch.bind(window);
-window.fetch=async(input,options)=>{
-  if(String(input)===CONFIG.API_BASE_URL+"/api/config"){
-    const token=document.getElementById("apiToken").value.trim();
-    return new Response(JSON.stringify({apiToken:token}),{status:token?200:401,headers:{"Content-Type":"application/json"}});
-  }
-  return commitAtFetch(input,options);
-};
-</script>
 </body>
 </html>

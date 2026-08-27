@@ -11,7 +11,8 @@ const envPath=path.join(__dirname,"../.env");
 function ask(question){
   return new Promise(resolve=>{
     const rl=readline.createInterface({input:process.stdin,output:process.stdout});
-    rl.question(question,value=>{rl.close();resolve(value.trim())});
+    rl._writeToOutput=()=>process.stdout.write("*");
+    rl.question(question,value=>{rl.close();process.stdout.write("\n");resolve(value.trim())});
   });
 }
 
