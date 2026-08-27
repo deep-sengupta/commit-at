@@ -55,18 +55,14 @@ function formatBytes(n){if(n<1024)return `${n} B`;if(n<1024*1024)return `${(n/10
 
 async function getApiToken() {
   const {apiToken=""}=await chrome.storage.local.get("apiToken");
-  if(apiToken) return String(apiToken).trim();
-  const res=await fetch(CONFIG.API_BASE_URL+"/api/config");
-  const data=await res.json().catch(()=>({}));
-  const token=String(data.apiToken||"").trim();
-  if(!res.ok||!token) throw new Error("Server API token is not configured. Run npm run build in the server directory.");
-  await chrome.storage.local.set({apiToken:token});
-  return token;
+  const token=String(apiToken).trim();
+  if(token) return token;
+  throw new Error("Enter the server API token and click Save API token.");
 }
 
 async function api(path, options={}) {
   const token=await getApiToken();
-  if(!token) throw new Error("Server API token is not configured. Run npm run build in the server directory.");
+  if(!token) throw new Error("Server API token is not configured. Paste it into the extension and click Save API token.");
   const res=await fetch(CONFIG.API_BASE_URL+path,{...options,headers:{"Content-Type":"application/json","X-Commit-At-Token":token,...(options.headers||{})}});
   const data=await res.json().catch(()=>({}));
   if(!res.ok) throw new Error(data.error||`HTTP ${res.status}`);
@@ -142,20 +138,34 @@ async function loadRepos(selectFullName) {
 }
 async function loadApiToken() {
   try {
-    await getApiToken();
+    const token=await getApiToken();
     $("apiToken").value="";
-    $("apiToken").placeholder="Configured automatically";
-    $("tokenStatus").textContent="API token configured automatically.";
+    $("apiToken").placeholder="Saved in this extension";
+    $("tokenStatus").textContent="API token saved locally.";
     $("tokenStatus").className="status";
+    return token;
   } catch(e) {
     $("apiToken").value="";
-    $("tokenStatus").textContent="Start the server after running npm run build.";
+    $("apiToken").placeholder="Paste the server API token";
+    $("tokenStatus").textContent=e.message;
     $("tokenStatus").className="status error";
+    return "";
   }
 }
 
 $("saveToken").onclick=async()=>{
-  await loadApiToken();
+  const token=$("apiToken").value.trim();
+  if(!token) {
+    $("tokenStatus").textContent="Paste the server API token first.";
+    $("tokenStatus").className="status error";
+    return;
+  }
+  await chrome.storage.local.set({apiToken:token});
+  $("apiToken").value="";
+  $("apiToken").placeholder="Saved in this extension";
+  $("tokenStatus").textContent="API token saved locally.";
+  $("tokenStatus").className="status";
+  await connect();
 };
 
 async function connect() {
